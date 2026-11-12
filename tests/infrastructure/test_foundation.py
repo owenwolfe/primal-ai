@@ -51,12 +51,17 @@ def test_workflow_compose_reports_use_runner_ownership() -> None:
     workflow = yaml.safe_load((ROOT / ".github/workflows/pr-checks.yml").read_text())
     backend_steps = workflow["jobs"]["backend"]["steps"]
     export_step = next(
-        step for step in backend_steps if step.get("name") == "Export and audit locked runtime dependencies"
+        step
+        for step in backend_steps
+        if step.get("name") == "Export and audit locked runtime dependencies"
     )
     run = export_step["run"]
     assert 'export LOCAL_UID="$(id -u)" LOCAL_GID="$(id -g)"' in run
     assert "mkdir -p reports" in run
-    assert "uv export --project backend --locked --no-dev --no-emit-project --no-hashes > reports/runtime-requirements.txt" in run
+    assert (
+        "uv export --project backend --locked --no-dev --no-emit-project --no-hashes > reports/runtime-requirements.txt"
+        in run
+    )
 
 
 def test_compose_has_no_database_or_secret_file() -> None:
