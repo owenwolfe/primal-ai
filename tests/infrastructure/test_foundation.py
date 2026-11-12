@@ -47,6 +47,15 @@ def test_workflow_permissions_and_pins() -> None:
                     assert len(ref) == 40, f"Action must be SHA pinned: {step['uses']}"
 
 
+def test_workflow_compose_reports_use_runner_ownership() -> None:
+    workflow = yaml.safe_load((ROOT / ".github/workflows/pr-checks.yml").read_text())
+    backend_steps = workflow["jobs"]["backend"]["steps"]
+    export_step = next(
+        step for step in backend_steps if step.get("name") == "Export and audit locked runtime dependencies"
+    )
+    assert 'export LOCAL_UID="$(id -u)" LOCAL_GID="$(id -g)"' in export_step["run"]
+
+
 def test_compose_has_no_database_or_secret_file() -> None:
     compose = yaml.safe_load((ROOT / "compose.yaml").read_text())
     assert set(compose["services"]) == {"backend"}
