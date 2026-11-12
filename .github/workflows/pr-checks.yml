@@ -33,7 +33,8 @@ jobs:
       - name: Export and audit locked runtime dependencies
         run: |
           export LOCAL_UID="$(id -u)" LOCAL_GID="$(id -g)"
-          docker compose run --rm backend uv export --project backend --locked --no-dev --no-emit-project --no-hashes -o reports/runtime-requirements.txt
+          mkdir -p reports
+          docker compose run --rm backend uv export --project backend --locked --no-dev --no-emit-project --no-hashes > reports/runtime-requirements.txt
           docker compose run --rm backend python scripts/verify.py audit
       - name: Compare core coverage with exact PR base
         env:

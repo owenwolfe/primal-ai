@@ -53,7 +53,10 @@ def test_workflow_compose_reports_use_runner_ownership() -> None:
     export_step = next(
         step for step in backend_steps if step.get("name") == "Export and audit locked runtime dependencies"
     )
-    assert 'export LOCAL_UID="$(id -u)" LOCAL_GID="$(id -g)"' in export_step["run"]
+    run = export_step["run"]
+    assert 'export LOCAL_UID="$(id -u)" LOCAL_GID="$(id -g)"' in run
+    assert "mkdir -p reports" in run
+    assert "uv export --project backend --locked --no-dev --no-emit-project --no-hashes > reports/runtime-requirements.txt" in run
 
 
 def test_compose_has_no_database_or_secret_file() -> None:
