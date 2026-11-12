@@ -1,0 +1,26 @@
+name: primal-infrastructure
+services:
+  backend:
+    image: primal-infrastructure-backend:local
+    build:
+      context: ./backend
+      target: development
+    user: "${LOCAL_UID:-1000}:${LOCAL_GID:-1000}"
+    working_dir: /workspace
+    volumes:
+      - type: bind
+        source: .
+        target: /workspace
+    environment:
+      PYTHONPATH: /workspace
+      UV_CACHE_DIR: /tmp/uv-cache
+    init: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=256m
+    networks: [tooling]
+networks:
+  tooling:
+    driver: bridge
