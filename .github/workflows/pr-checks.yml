@@ -1,0 +1,93 @@
+name: Pull request checks
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_call:
+permissions:
+  contents: read
+concurrency:
+  group: checks-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  backend:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5
+        with:
+          path: /tmp/primal-build-cache
+          key: backend-${{ runner.os }}-${{ hashFiles('backend/uv.lock', 'backend/Dockerfile') }}
+      - name: Restore local BuildKit cache
+        run: |
+          docker buildx create --use --driver docker-container
+          docker buildx build --load --target development -t primal-infrastructure-backend:local --cache-from type=local,src=/tmp/primal-build-cache --cache-to type=local,dest=/tmp/primal-build-cache-new,mode=max backend
+          if [ -d /tmp/primal-build-cache ]; then mv /tmp/primal-build-cache /tmp/primal-build-cache-old; fi
+          mv /tmp/primal-build-cache-new /tmp/primal-build-cache
+      - name: Validate, build, and smoke-test Docker tooling
+        run: sh scripts/docker-smoke.sh
+      - name: Export and audit locked runtime dependencies
+        run: |
+          export LOCAL_UID="$(id -u)" LOCAL_GID="$(id -g)"
+          mkdir -p reports
+          docker compose run --rm backend uv export --project backend --locked --no-dev --no-emit-project --no-hashes > reports/runtime-requirements.txt
+          docker compose run --rm backend python scripts/verify.py audit
+      - name: Compare core coverage with exact PR base
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: sh scripts/coverage-base.sh python
+      - name: Scan source and runtime image
+        run: |
+          sh scripts/security.sh source
+          sh scripts/security.sh image
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        if: always()
+        with:
+          name: backend-reports
+          path: reports/
+          retention-days: 7
+  native:
+    runs-on: macos-26
+    timeout-minutes: 25
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_26.6.app/Contents/Developer
+      IOS_TEST_DESTINATION: platform=iOS Simulator,name=iPhone 17
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5
+        with:
+          path: |
+            ~/Library/Caches/org.swift.swiftpm
+            ~/Library/Developer/Xcode/DerivedData/SourcePackages
+          key: native-${{ runner.os }}-26.6-${{ hashFiles('ios/**/Package.resolved') }}
+      - name: Native toolchain and available application checks
+        run: sh scripts/native-check.sh
+      - name: Compare Swift core coverage
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: sh scripts/coverage-base.sh swift
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        if: always()
+        with:
+          name: native-reports
+          path: reports/
+          if-no-files-found: ignore
+          retention-days: 7
+  required:
+    name: Required checks
+    runs-on: ubuntu-24.04
+    if: always()
+    needs: [backend, native]
+    steps:
+      - name: Require both jobs to pass
+        env:
+          BACKEND_RESULT: ${{ needs.backend.result }}
+          NATIVE_RESULT: ${{ needs.native.result }}
+        run: test "$BACKEND_RESULT" = success && test "$NATIVE_RESULT" = success

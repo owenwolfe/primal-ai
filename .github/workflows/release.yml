@@ -1,0 +1,103 @@
+name: Release beta
+on:
+  push:
+    tags: ['v*']
+permissions:
+  contents: read
+concurrency:
+  group: beta-release
+  cancel-in-progress: false
+jobs:
+  readiness:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Require a tag on main and implemented applications
+        run: |
+          git merge-base --is-ancestor HEAD origin/main
+          sh scripts/release-prerequisites.sh
+  validation:
+    needs: readiness
+    uses: ./.github/workflows/pr-checks.yml
+  backend:
+    needs: validation
+    runs-on: ubuntu-24.04
+    environment: beta
+    timeout-minutes: 25
+    permissions:
+      contents: read
+      packages: write
+    env:
+      RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+      RENDER_SERVICE_ID: ${{ vars.RENDER_SERVICE_ID }}
+      API_BASE_URL: ${{ vars.API_BASE_URL }}
+      IOS_BUNDLE_ID: ${{ vars.IOS_BUNDLE_ID }}
+      APPLE_TEAM_ID: ${{ vars.APPLE_TEAM_ID }}
+      ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+      ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+      ASC_PRIVATE_KEY: ${{ secrets.ASC_PRIVATE_KEY }}
+      IOS_DISTRIBUTION_P12: ${{ secrets.IOS_DISTRIBUTION_P12 }}
+      IOS_CERT_PASSWORD: ${{ secrets.IOS_CERT_PASSWORD }}
+      IOS_PROVISIONING_PROFILE: ${{ secrets.IOS_PROVISIONING_PROFILE }}
+      DJANGO_WSGI_MODULE: ${{ vars.DJANGO_WSGI_MODULE }}
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: Fail before publication when configuration is missing
+        run: sh scripts/release-prerequisites.sh credentials
+      - name: Build and scan runtime
+        run: |
+          docker build --target runtime -t primal-runtime:local backend
+          sh scripts/security.sh image
+      - name: Publish immutable image
+        env:
+          REGISTRY_TOKEN: ${{ github.token }}
+        run: |
+          registry="ghcr.io/$(printf '%s' "$GITHUB_REPOSITORY" | tr '[:upper:]' '[:lower:]')/backend"
+          printf '%s' "$REGISTRY_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+          trap 'docker logout ghcr.io' EXIT
+          docker tag primal-runtime:local "$registry:$GITHUB_SHA"
+          docker push "$registry:$GITHUB_SHA"
+          digest=$(docker inspect --format '{{index .RepoDigests 0}}' "$registry:$GITHUB_SHA")
+          printf '%s\n' "$digest" > image-digest.txt
+      - name: Deploy exact digest and verify Render service
+        run: python3 scripts/render-release.py
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: backend-image-digest
+          path: image-digest.txt
+  ios:
+    needs: backend
+    runs-on: macos-26
+    environment: beta
+    timeout-minutes: 30
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_26.6.app/Contents/Developer
+      API_BASE_URL: ${{ vars.API_BASE_URL }}
+      IOS_BUNDLE_ID: ${{ vars.IOS_BUNDLE_ID }}
+      APPLE_TEAM_ID: ${{ vars.APPLE_TEAM_ID }}
+      ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+      ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+      ASC_PRIVATE_KEY: ${{ secrets.ASC_PRIVATE_KEY }}
+      IOS_DISTRIBUTION_P12: ${{ secrets.IOS_DISTRIBUTION_P12 }}
+      IOS_CERT_PASSWORD: ${{ secrets.IOS_CERT_PASSWORD }}
+      IOS_PROVISIONING_PROFILE: ${{ secrets.IOS_PROVISIONING_PROFILE }}
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: Sign, archive, and upload to TestFlight
+        run: bash scripts/ios-release.sh
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        if: always()
+        with:
+          name: ios-release-artifacts
+          path: |
+            reports/*.ipa
+            reports/*.xcarchive/dSYMs
+            reports/checksums.txt
+          retention-days: 14
