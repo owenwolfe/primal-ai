@@ -30,7 +30,7 @@ def evaluate_label(request):
         return error("UNSUPPORTED_MEDIA_TYPE", "Send application/json.", 415)
     try:
         payload = json.loads(request.body)
-    except (ValueError, UnicodeDecodeError):
+    except (ValueError, UnicodeDecodeError, RecursionError):
         return error("INVALID_JSON", "The request must contain valid JSON.", 400)
     if not isinstance(payload, dict) or set(payload) != {"ingredientText"}:
         return error("INVALID_REQUEST", "Provide only ingredientText.", 422)

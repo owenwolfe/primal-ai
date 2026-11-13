@@ -51,6 +51,17 @@ def test_invalid_json(client):
     )
 
 
+def test_deeply_nested_json_returns_a_readable_error(client):
+    response = client.post(
+        "/api/v1/evaluations",
+        data=b"[" * 12000 + b"0" + b"]" * 12000,
+        content_type="application/json",
+    )
+    assert response.status_code == 400
+    assert response.json()["error"]["code"] == "INVALID_JSON"
+    assert response["Cache-Control"] == "no-store"
+
+
 def test_body_limit(client):
     response = client.post(
         "/api/v1/evaluations", data=b"x" * 33000, content_type="application/json"

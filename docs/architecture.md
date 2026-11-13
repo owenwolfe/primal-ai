@@ -117,6 +117,39 @@ Physical-device checks must cover glare, rotated images, incomplete lists, camer
 denial, offline/retry, and a reachable HTTPS backend. Distribution additionally needs a unique
 bundle ID, signing team, app icon, privacy disclosures, reviewed rules, and TestFlight validation.
 
+### Local verification, 2026-11-12
+
+On the macOS workstation, the locked Python 3.12 environment installed successfully.
+`sh scripts/check-backend.sh` passed lint, formatting, Django checks, and all 39 tests
+with 93% combined line/branch coverage. The API now handles JSON decoder recursion limits
+with the existing `INVALID_JSON` error rather than an unhandled server error; its regression
+test submits a deeply nested request below the 32 KiB body limit.
+`python3 scripts/smoke-api.py` also passed against a local Gunicorn server.
+
+Docker Desktop was subsequently installed. The Compose image built, its container became
+healthy, and the HTTP smoke test passed against the containerized API. Test containers and
+their Compose network were removed afterward; the image and build cache were retained.
+Xcode 26.3 is now installed on macOS 15.6.1. The iOS 26.2 arm64 simulator runtime was
+installed and Xcode's first-launch component update completed. Direct Debug and Release
+app-target builds passed using:
+
+```sh
+xcodebuild -project ios/Primal.xcodeproj -target Primal -configuration Debug \
+  -sdk iphonesimulator CODE_SIGNING_ALLOWED=NO SYMROOT=/tmp/primal-target-build
+# Repeat with -configuration Release for the optimized build.
+```
+
+The Debug app installed and launched on the iPhone 17 Pro simulator, and its opening screen
+was visually inspected. The local Compose backend was left running for interactive testing.
+Unit/UI tests remain unverified: `scripts/check-ios.sh` fails during destination discovery
+with “iOS 26.2 is not installed,” even though simctl can boot that runtime and direct SDK
+builds succeed. Explicit simulator SDK overrides and the first-launch component update did
+not resolve it. Investigate scheme/platform destination discovery before claiming native tests
+pass. Logs for this workstation session are in `/tmp/primal-native-check.log` and
+`/tmp/primal-release-build.log`; these temporary files are not repository artifacts.
+No deployment or signing was performed. Existing v1 request/response fields and evaluator
+behavior are unchanged.
+
 ## Primary implementation references
 
 - [Apple Vision text recognition](https://developer.apple.com/documentation/vision/recognizing-text-in-images)
