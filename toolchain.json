@@ -1,0 +1,9 @@
+{
+  "python": "3.14",
+  "uv": "0.13.7",
+  "xcode": "26.6",
+  "swift_language_mode": "6",
+  "gitleaks": "8.30.0",
+  "trivy": "0.69.3",
+  "osv_scanner": "2.3.3"
+}

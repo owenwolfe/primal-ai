@@ -1,0 +1,2 @@
+# Reviewed false positive: prose about floor-plan access points, not a credential.
+/repo/.agents/skills/generate-floor-plan-graph/SKILL.md:generic-api-key:77
