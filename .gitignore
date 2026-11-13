@@ -1,4 +1,10 @@
 .env
+.venv/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.coverage
+reports/
 .env.*
 !.env.example
 .venv/
@@ -15,6 +21,8 @@ build/
 DerivedData/
 *.xcuserstate
 xcuserdata/
+*.ipa
+*.xcarchive
 *.xcarchive/
 *.xcresult/
 *.ipa

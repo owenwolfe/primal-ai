@@ -1,0 +1,42 @@
+{
+  "request": {
+    "ingredientText": "oats, honey, mystery ingredient"
+  },
+  "response": {
+    "schemaVersion": "1",
+    "rulesVersion": "draft-1",
+    "status": "partial",
+    "rating": null,
+    "findings": [
+      {
+        "id": "0",
+        "label": "oats",
+        "name": "oats",
+        "category": "whole_food",
+        "explanation": "Recognized as a whole-food ingredient in this draft preference model.",
+        "basis": "preference"
+      },
+      {
+        "id": "1",
+        "label": "honey",
+        "name": "honey",
+        "category": "added_sweetener",
+        "explanation": "An added sweetener. Flagged for review under the preference for unsweetened foods; no amount is inferred.",
+        "basis": "preference"
+      },
+      {
+        "id": "2",
+        "label": "mystery ingredient",
+        "name": "mystery ingredient",
+        "category": "unknown",
+        "explanation": "Not in the draft rule bundle. Check the spelling or compound ingredient; no health or preference judgment was made.",
+        "basis": "unmatched"
+      }
+    ],
+    "unmatchedIngredients": [
+      "mystery ingredient"
+    ],
+    "notice": "Draft whole-food preferences, not a health, nutrition, allergy, or safety assessment. Confirm the complete ingredient list. Unknown ingredients prevent an overall rating.",
+    "methodology": "Exact ingredient-name matching against a small English-language rule bundle. Whole foods and basic culinary ingredients align. Added sweeteners and selected additives trigger review. Amounts, processing methods, nutrients, and allergens are not evaluated. These categories are product preferences, not scientific findings."
+  }
+}

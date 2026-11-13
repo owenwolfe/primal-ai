@@ -1,0 +1,428 @@
+{
+  "version": "draft-1",
+  "notice": "Draft whole-food preferences, not a health, nutrition, allergy, or safety assessment. Confirm the complete ingredient list. Unknown ingredients prevent an overall rating.",
+  "methodology": "Exact ingredient-name matching against a small English-language rule bundle. Whole foods and basic culinary ingredients align. Added sweeteners and selected additives trigger review. Amounts, processing methods, nutrients, and allergens are not evaluated. These categories are product preferences, not scientific findings.",
+  "categories": {
+    "whole_food": {
+      "explanation": "Recognized as a whole-food ingredient in this draft preference model."
+    },
+    "culinary": {
+      "explanation": "Recognized as a basic culinary ingredient. This model permits it; amounts are not evaluated."
+    },
+    "added_sweetener": {
+      "explanation": "An added sweetener. Flagged for review under the preference for unsweetened foods; no amount is inferred."
+    },
+    "additive": {
+      "explanation": "An additive flagged for preference review. This does not mean it is unsafe."
+    },
+    "unknown": {
+      "explanation": "Not in the draft rule bundle. Check the spelling or compound ingredient; no health or preference judgment was made."
+    }
+  },
+  "ingredients": [
+    {
+      "name": "oats",
+      "aliases": [
+        "rolled oats",
+        "whole grain oats"
+      ],
+      "group": "whole_food"
+    },
+    {
+      "name": "almonds",
+      "aliases": [],
+      "group": "whole_food"
+    },
+    {
+      "name": "peanuts",
+      "aliases": [],
+      "group": "whole_food"
+    },
+    {
+      "name": "cashews",
+      "aliases": [],
+      "group": "whole_food"
+    },
+    {
+      "name": "walnuts",
+      "aliases": [],
+      "group": "whole_food"
+    },
+    {
+      "name": "pecans",
+      "aliases": [],
+      "group": "whole_food"
+    },
+    {
+      "name": "hazelnuts",
+      "aliases": [],
+      "group": "whole_food"
+    },
+    {
+      "name": "pistachios",
+      "aliases": [],
+      "group": "whole_food"
+    },
+    {
+      "name": "chia seeds",
+      "aliases": [],
+      "group": "whole_food"
+    },
+    {
+      "name": "flax seeds",
+      "aliases": [
+        "flaxseed"
+      ],
+      "group": "whole_food"
+    },
+    {
+      "name": "pumpkin seeds",
+      "aliases": [],
+      "group": "whole_food"
+    },
+    {
+      "name": "sunflower seeds",
+      "aliases": [],
+      "group": "whole_food"
+    },
+    {
+      "name": "sesame seeds",
+      "aliases": [],
+      "group": "whole_food"
+    },
+    {
+      "name": "quinoa",
+      "aliases": [],
+      "group": "whole_food"
+    },
+    {
+      "name": "brown rice",
+      "aliases": [],
+      "group": "whole_food"
+    },
+    {
+      "name": "white rice",
+      "aliases": [
+        "rice"
+      ],
+      "group": "whole_food"
+    },
+    {
+      "name": "whole wheat flour",
+      "aliases": [
+        "whole grain wheat flour"
+      ],
+      "group": "whole_food"
+    },
+    {
+      "name": "chickpeas",
+      "aliases": [
+        "garbanzo beans"
+      ],
+      "group": "whole_food"
+    },
+    {
+      "name": "black beans",
+      "aliases": [],
+      "group": "whole_food"
+    },
+    {
+      "name": "lentils",
+      "aliases": [],
+      "group": "whole_food"
+    },
+    {
+      "name": "tomatoes",
+      "aliases": [
+        "tomato"
+      ],
+      "group": "whole_food"
+    },
+    {
+      "name": "apples",
+      "aliases": [
+        "apple"
+      ],
+      "group": "whole_food"
+    },
+    {
+      "name": "bananas",
+      "aliases": [
+        "banana"
+      ],
+      "group": "whole_food"
+    },
+    {
+      "name": "strawberries",
+      "aliases": [],
+      "group": "whole_food"
+    },
+    {
+      "name": "blueberries",
+      "aliases": [],
+      "group": "whole_food"
+    },
+    {
+      "name": "dates",
+      "aliases": [],
+      "group": "whole_food"
+    },
+    {
+      "name": "raisins",
+      "aliases": [],
+      "group": "whole_food"
+    },
+    {
+      "name": "coconut",
+      "aliases": [],
+      "group": "whole_food"
+    },
+    {
+      "name": "milk",
+      "aliases": [
+        "whole milk"
+      ],
+      "group": "whole_food"
+    },
+    {
+      "name": "eggs",
+      "aliases": [
+        "egg"
+      ],
+      "group": "whole_food"
+    },
+    {
+      "name": "water",
+      "aliases": [],
+      "group": "whole_food"
+    },
+    {
+      "name": "garlic",
+      "aliases": [],
+      "group": "whole_food"
+    },
+    {
+      "name": "onion",
+      "aliases": [
+        "onions"
+      ],
+      "group": "whole_food"
+    },
+    {
+      "name": "cinnamon",
+      "aliases": [],
+      "group": "whole_food"
+    },
+    {
+      "name": "cocoa powder",
+      "aliases": [
+        "cocoa"
+      ],
+      "group": "whole_food"
+    },
+    {
+      "name": "coffee",
+      "aliases": [],
+      "group": "whole_food"
+    },
+    {
+      "name": "tea",
+      "aliases": [],
+      "group": "whole_food"
+    },
+    {
+      "name": "spinach",
+      "aliases": [],
+      "group": "whole_food"
+    },
+    {
+      "name": "carrots",
+      "aliases": [],
+      "group": "whole_food"
+    },
+    {
+      "name": "potatoes",
+      "aliases": [],
+      "group": "whole_food"
+    },
+    {
+      "name": "salt",
+      "aliases": [
+        "sea salt"
+      ],
+      "group": "culinary"
+    },
+    {
+      "name": "olive oil",
+      "aliases": [
+        "extra virgin olive oil"
+      ],
+      "group": "culinary"
+    },
+    {
+      "name": "avocado oil",
+      "aliases": [],
+      "group": "culinary"
+    },
+    {
+      "name": "butter",
+      "aliases": [],
+      "group": "culinary"
+    },
+    {
+      "name": "vinegar",
+      "aliases": [
+        "apple cider vinegar"
+      ],
+      "group": "culinary"
+    },
+    {
+      "name": "lemon juice",
+      "aliases": [],
+      "group": "culinary"
+    },
+    {
+      "name": "vanilla extract",
+      "aliases": [],
+      "group": "culinary"
+    },
+    {
+      "name": "baking soda",
+      "aliases": [
+        "sodium bicarbonate"
+      ],
+      "group": "culinary"
+    },
+    {
+      "name": "yeast",
+      "aliases": [],
+      "group": "culinary"
+    },
+    {
+      "name": "sugar",
+      "aliases": [
+        "cane sugar",
+        "organic cane sugar"
+      ],
+      "group": "added_sweetener"
+    },
+    {
+      "name": "brown sugar",
+      "aliases": [],
+      "group": "added_sweetener"
+    },
+    {
+      "name": "corn syrup",
+      "aliases": [],
+      "group": "added_sweetener"
+    },
+    {
+      "name": "high fructose corn syrup",
+      "aliases": [],
+      "group": "added_sweetener"
+    },
+    {
+      "name": "honey",
+      "aliases": [],
+      "group": "added_sweetener"
+    },
+    {
+      "name": "maple syrup",
+      "aliases": [],
+      "group": "added_sweetener"
+    },
+    {
+      "name": "agave syrup",
+      "aliases": [
+        "agave nectar"
+      ],
+      "group": "added_sweetener"
+    },
+    {
+      "name": "dextrose",
+      "aliases": [],
+      "group": "added_sweetener"
+    },
+    {
+      "name": "glucose syrup",
+      "aliases": [],
+      "group": "added_sweetener"
+    },
+    {
+      "name": "molasses",
+      "aliases": [],
+      "group": "added_sweetener"
+    },
+    {
+      "name": "natural flavors",
+      "aliases": [
+        "natural flavor",
+        "natural flavour",
+        "natural flavours"
+      ],
+      "group": "additive"
+    },
+    {
+      "name": "artificial flavors",
+      "aliases": [
+        "artificial flavor"
+      ],
+      "group": "additive"
+    },
+    {
+      "name": "xanthan gum",
+      "aliases": [],
+      "group": "additive"
+    },
+    {
+      "name": "guar gum",
+      "aliases": [],
+      "group": "additive"
+    },
+    {
+      "name": "soy lecithin",
+      "aliases": [],
+      "group": "additive"
+    },
+    {
+      "name": "sunflower lecithin",
+      "aliases": [],
+      "group": "additive"
+    },
+    {
+      "name": "potassium sorbate",
+      "aliases": [],
+      "group": "additive"
+    },
+    {
+      "name": "sodium benzoate",
+      "aliases": [],
+      "group": "additive"
+    },
+    {
+      "name": "carrageenan",
+      "aliases": [],
+      "group": "additive"
+    },
+    {
+      "name": "sucralose",
+      "aliases": [],
+      "group": "additive"
+    },
+    {
+      "name": "aspartame",
+      "aliases": [],
+      "group": "additive"
+    },
+    {
+      "name": "acesulfame potassium",
+      "aliases": [],
+      "group": "additive"
+    },
+    {
+      "name": "red 40",
+      "aliases": [],
+      "group": "additive"
+    }
+  ]
+}
